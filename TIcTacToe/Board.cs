@@ -8,7 +8,7 @@ namespace TIcTacToe
 {
     class Board
     {
-        public enum eCell {Empty, X, O, InvalidCell};
+        public enum eCell {Empty, X, O};
 
         private eCell[,] m_board;
         private int m_boardSize;
@@ -22,7 +22,6 @@ namespace TIcTacToe
         {
             get { return m_boardSize; }
         }
-
 
         public Board(int i_size)
         {
@@ -42,10 +41,9 @@ namespace TIcTacToe
             return isValidInsertion;
         }
 
-        public eCell GetCellAtCoordinate(int i_x, int i_y)
+        public eCell? GetCellAtCoordinate(int i_x, int i_y)
         {
-            //TODO: maybe change
-            return IsInRange(i_x, i_y) ? m_board[i_x, i_y] : eCell.InvalidCell;
+            return IsInRange(i_x, i_y) ? m_board[i_x, i_y] : null;
         }
 
         public bool IsInRange(int i_x, int i_y)
@@ -57,7 +55,5 @@ namespace TIcTacToe
         {
             return m_board[i_x, i_y] == eCell.Empty;
         }
-
-
     }
 }

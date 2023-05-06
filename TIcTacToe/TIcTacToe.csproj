@@ -34,10 +34,12 @@
   </PropertyGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <Content Include="toDo.txt" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Board.cs" />
     <Compile Include="Game.cs" />
+    <Compile Include="UserInterface.cs" />
     <Compile Include="ValidateWin.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
