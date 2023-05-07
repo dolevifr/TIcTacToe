@@ -11,7 +11,12 @@ namespace TIcTacToe
         public enum eCell {Empty, X, O};
 
         private eCell[,] m_board;
-        private int m_boardSize;
+        private  int m_boardSize;
+        public Board(int i_size)
+        {
+            m_boardSize = i_size;
+            m_board = new eCell[i_size, i_size];
+        }
 
         public eCell[,] GameBoard
         {
@@ -23,15 +28,10 @@ namespace TIcTacToe
             get { return m_boardSize; }
         }
 
-        public Board(int i_size)
-        {
-            m_boardSize = i_size;
-            m_board = new eCell[i_size, i_size];
-        }
 
         public bool SetCellInBoard(int i_x, int i_y, eCell playerSymbol)
         {
-            bool isValidInsertion = isCellEmpty(i_x, i_y) && IsInRange(i_x, i_y);
+            bool isValidInsertion = IsInRange(i_x, i_y) && isCellEmpty(i_x, i_y);
 
             if (isValidInsertion)
             {

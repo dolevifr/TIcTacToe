@@ -6,12 +6,12 @@ using System.Threading.Tasks;
 
 namespace TIcTacToe
 {
-    class ValidateWin
+    class WinValidator
     {
         private Board m_board;
 
 
-        public ValidateWin(Board io_board)
+        public WinValidator(Board io_board)
         {
             m_board = io_board;
         }
