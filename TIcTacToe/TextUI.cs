@@ -8,89 +8,87 @@ namespace TIcTacToe
 {
     class UserInterface
     {
-        GameLogic m_gameLogic;
+        private const int k_lowerBoardSizeLimit = 3;
+        private const int k_upperBoardSizeLimit = 9;
 
 
-        UserInterface()
+        public static void Main()
         {
-            m_gameLogic = new GameLogic(boardSize(m_gameLogic.GameBoard), false);
-            Board.eCell[,] gameBoard;
-            int sizeOfBoard = boardSize(m_gameLogic.GameBoard);
-            gameBoard = m_gameLogic.GameBoard;
+            UserInterface ui = new UserInterface();
+            ui.StartGame();
         }
-        static void Main()
+
+        public void StartGame()
         {
-            UserInterface gameInformation = new UserInterface();
-            Board.eCell[,] gameBoard = gameInformation.m_gameLogic.GameBoard;
-            welcomeMessage();
-            int BoardSize = Int32.Parse(getUserSizeOfBoard());
-            printBoard(gameBoard);
+            GameLogic currentGame;
+
+            System.Console.WriteLine(TextUIMessages.k_welcomeMessage);
+            int boardSize = configureGameBoardSize();
+            bool isComputerPlayer = configureIfComputerPlayer();
+
+            currentGame = new GameLogic(boardSize, isComputerPlayer);
+            printBoard(currentGame.GameBoard);
+
         }
-        private static string getUserSizeOfBoard()
+
+        private int configureGameBoardSize()
         {
-            return System.Console.ReadLine();
-        }
-        private static void welcomeMessage()
-        {
-            System.Console.WriteLine(@"Hello and welcome to reverse tic tac toe game!
-                                    Please select if you wish to play against a computer or against another player:
-                                    1 for computer
-                                    2 for human rival
-                                    ");
-        }
-        private static void printBoard(Board.eCell[,] gameBoard)
-        {
-            UserInterface gameInformation = new UserInterface();
-            int m_boardSize = boardSize(gameBoard);
-            Console.Clear();
-            for (int i = 0; i < m_boardSize; i++)
-            {
-                for (int j = 0; j < m_boardSize; j++)
+            int value = -1;
+            bool isValidInput = false;
+
+            while (true) {
+                System.Console.WriteLine(TextUIMessages.k_gameBoardSizeSelectionMessage);
+                string input = Console.ReadLine();
+
+                if (int.TryParse(input, out value) && value >= k_lowerBoardSizeLimit && value <= k_upperBoardSizeLimit)
                 {
-                    System.Console.WriteLine(gameBoard[i, j]);
+                    isValidInput = true;
+                    break;
+                }
+
+                Console.WriteLine(TextUIMessages.k_invalidInputMessage);
+            }
+
+            return value;
+        }
+
+        private bool configureIfComputerPlayer()
+        {
+            char option = 'y';
+            bool isValidInput = false;
+            bool isComputerPlayer = false;
+            while (true)
+            {
+                System.Console.WriteLine(TextUIMessages.k_gameBoardSizeSelectionMessage);
+                string input = Console.ReadLine();
+
+                if (char.TryParse(input, out option) && option == 'y' || option == 'n')
+                {
+                    isValidInput = true;
+                    isComputerPlayer = option == 'y';
+                    break;
+                }
+
+                Console.WriteLine(TextUIMessages.k_invalidInputMessage);
+            }
+
+            return isComputerPlayer;
+        }
+
+        private void printBoard(Board.eCell[,] i_GameBoard)
+        {
+            int boardSize = i_GameBoard.GetLength(0);
+
+            for (int i = 0; i < boardSize; i++)
+            {
+                for (int j = 0; j < boardSize; j++)
+                {
+                    System.Console.WriteLine(i_GameBoard[i, j]);
                 }
             }
         }
-        private void getUserChoiceOfRival()
-        {
-            System.Console.ReadLine();
-        }
 
-        private void getUserCellChoice(Board.eCell[,] gameBoard)
-        {
-            int m_boardSize = boardSize(gameBoard);
-            bool isValidChoice = true;
-            do
-            {
-                string userInput = System.Console.ReadLine();
-                int x = int.Parse(userInput.Substring(userInput.IndexOf("x:") + 2, userInput.IndexOf("y:") - userInput.IndexOf("x:") - 2));
-                int y = int.Parse(userInput.Substring(userInput.IndexOf("y:") + 2));
-                if (!userInput.StartsWith("x:") || !userInput.Contains("y:"))
-                {
-                    isValidChoice = false;
-                }
-            } while (isValidChoice);
-        }
-        private static int boardSize(Board.eCell[,] gameBoard)
-        {
-            return gameBoard.GetLength(0);
-        }
-        private void printWinOrLose(bool isWinner)
-        {
-            string winner = "congrats! you won the game";
-            string loser = "congrats! you lost the game";
-            string winnOrLoseMessage = string.Format(@"
-  _____          __  __ ______    ______      ________ _____  
- / ____|   /\   |  \/  |  ____|  / __ \ \    / /  ____|  __ \ 
-| |  __   /  \  | \  / | |__    | |  | \ \  / /| |__  | |__) |
-| | |_ | / /\ \ | |\/| |  __|   | |  | |\ \/ / |  __| |  _  / 
-| |__| |/ ____ \| |  | | |____  | |__| | \  /  | |____| | \ \ 
- \_____/_/    \_\_|  |_|______|  \____/   \/   |______|_|  \_\
 
-                      {}", isWinner ? winner : loser);
-            System.Console.WriteLine(winnOrLoseMessage);
-
-        }
     }
 }
 

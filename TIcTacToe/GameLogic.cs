@@ -11,7 +11,7 @@ namespace TIcTacToe
         private bool m_IsComputerRival;
         private int m_StepCount;
         
-        private GameLogic(int boardSize, bool isComputerRival)
+        public GameLogic(int boardSize, bool isComputerRival)
         {
             m_GameBoard = new Board(boardSize);
             m_WinValidator = new WinValidator(m_GameBoard);

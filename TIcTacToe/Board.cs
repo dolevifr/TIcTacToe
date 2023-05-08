@@ -43,7 +43,7 @@ namespace TIcTacToe
 
         public eCell? GetCellAtCoordinate(int i_x, int i_y)
         {
-            return IsInRange(i_x, i_y) ? m_board[i_x, i_y] : null;
+            return IsInRange(i_x, i_y) ? m_board[i_x, i_y] : (eCell?)null;
         }
 
         public bool IsInRange(int i_x, int i_y)
