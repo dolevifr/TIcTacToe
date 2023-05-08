@@ -15,11 +15,18 @@ namespace TIcTacToe
             "Please select an integer between 3-9 repressenting the size of the game board.";
 
         public const string k_cellSelectionMessage =
-            "Please select a two integers representing between 0-n repressenting a cell: example: '1 2'";
+            "Please select a two integers representing between 1-boardSize repressenting a cell: example: '1 2'";
         
-        public const string k_selectIfComputerPlayerMessage = "Play against the computer (type y/n)";
+        public const string k_selectIfComputerPlayerMessage =
+            "Please select whether you want to play against the computer (type y/n)";
 
-        public const string k_invalidInputMessage = "Invalid input. Please try again";
+        public const string k_invalidInputMessage = "Invalid input. Please try again.";
+
+        public const string k_computerWonMessage = "Computer player has won the game.";
+
+        public const string k_humanWonMessage = "Player{0} has won the game.";
+
+        public const string k_drawOutcomeMessage = "Draw!";
 
         public const string k_gameOverMessage = @"
           _____          __  __ ______    ______      ________ _____  

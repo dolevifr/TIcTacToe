@@ -34,10 +34,10 @@
   </PropertyGroup>
   <ItemGroup>
     <None Include="App.config" />
-    <Content Include="toDo.txt" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Board.cs" />
+    <Compile Include="TextBoardDisplayer.cs" />
     <Compile Include="GameLogic.cs" />
     <Compile Include="TextUI.cs" />
     <Compile Include="TextUIMessages.cs" />
@@ -47,6 +47,7 @@
     <Reference Include="Ex02.ConsoleUtils">
       <HintPath>.\Ex02.ConsoleUtils.dll</HintPath>
     </Reference>
+    <Reference Include="System.Drawing" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

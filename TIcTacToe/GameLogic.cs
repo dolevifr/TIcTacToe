@@ -1,10 +1,10 @@
 ﻿using System;
-
+using System.Threading;
 namespace TIcTacToe
 {
     class GameLogic
     {
-        public enum eStepOutcome {ComputerWon, PlayerWon, InvalidMove, ValidMove, Draw}
+        public enum eStepOutcome {PlayerWon, ComputerWon, InvalidMove, ValidMove, Draw}
 
         private Board m_GameBoard;
         private WinValidator m_WinValidator;
@@ -17,6 +17,7 @@ namespace TIcTacToe
             m_WinValidator = new WinValidator(m_GameBoard);
             m_IsComputerRival = isComputerRival;
             m_StepCount = 0;
+             
         }
 
     public Board.eCell[,] GameBoard
