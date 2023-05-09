@@ -1,6 +1,7 @@
 using System;
 using System.Drawing;
 using System.Runtime.Remoting.Channels;
+using System.Threading;
 
 namespace TIcTacToe
 {
@@ -17,8 +18,7 @@ namespace TIcTacToe
 
         public static void Main()
         {
-            UserInterface ui = new UserInterface();
-            ui.StartOneMatch();
+            GameWithScoreTrack();
         }
 
         public UserInterface()
@@ -27,8 +27,35 @@ namespace TIcTacToe
             m_isComputerPlayer = configureIfComputerPlayer();
         }
 
+        private static void GameWithScoreTrack()
+        {
+            UserInterface ui = new UserInterface();
+            char quitGame = ' ';
+            bool continuePlaying = true;
+            bool isFirstGame = true;
+            GameLogic.eStepOutcome whoWon;
 
-        public void StartOneMatch()
+            while (continuePlaying)
+            {
+                Console.WriteLine(TextUIMessages.k_quitMessage);
+                whoWon = ui.StartOneMatch(isFirstGame,ui.m_isComputerPlayer,ui.m_boardSize);
+                if (whoWon == GameLogic.eStepOutcome.PlayerWon)
+                {
+                    ui.m_playerOneVictoriesCount++;
+                }
+                else if (whoWon == GameLogic.eStepOutcome.ComputerWon)
+                {
+                    ui.m_playerTwoVictoriesCount++;
+                }
+                Ex02.ConsoleUtils.Screen.Clear();
+                Console.WriteLine(TextUIMessages.k_scoreMessage, ui.m_playerOneVictoriesCount,ui.m_playerTwoVictoriesCount);
+                Thread.Sleep(5000);
+                Ex02.ConsoleUtils.Screen.Clear();
+
+            }
+        }
+
+        public GameLogic.eStepOutcome StartOneMatch(bool isFirstGame, bool isComputerRival, int boardSize)
         {
             GameLogic currentGame;
             TextBoardDisplayer textBoardDisplayer;
@@ -38,8 +65,14 @@ namespace TIcTacToe
             Console.WriteLine(TextUIMessages.k_welcomeMessage);
             
             int stepCounter = 0;
-
-            currentGame = new GameLogic(m_boardSize, m_isComputerPlayer);
+            if(isFirstGame)
+            {
+                currentGame = new GameLogic(m_boardSize, m_isComputerPlayer);
+            }
+            else
+            {
+                currentGame = new GameLogic(boardSize, isComputerRival);
+            }
             textBoardDisplayer = new TextBoardDisplayer(currentGame.GameBoard);
 
             while (currentStepOutcome == GameLogic.eStepOutcome.ValidMove || currentStepOutcome == GameLogic.eStepOutcome.InvalidMove)
@@ -58,8 +91,8 @@ namespace TIcTacToe
                     Console.WriteLine(TextUIMessages.k_invalidInputMessage);
                 }
             }
-
             printEndGameMessage(currentStepOutcome, stepCounter);
+            return currentStepOutcome;
         }
 
         private int configureGameBoardSize()
@@ -140,7 +173,6 @@ namespace TIcTacToe
                     break;
             }
 
-            Console.ReadLine();
         }
     }
 }

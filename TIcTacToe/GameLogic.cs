@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Security.AccessControl;
 using System.Threading;
 namespace TIcTacToe
 {
@@ -80,9 +81,7 @@ namespace TIcTacToe
                 randomY = randomNumGenerator.Next() % m_GameBoard.BoardSize;
                 stepOutcome = makeStep(randomX, randomY, v_isComputerStep);
             }
-
             return stepOutcome;
         }
-
     }
 }
