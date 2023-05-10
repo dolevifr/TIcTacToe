@@ -5,20 +5,21 @@ namespace TIcTacToe
 {
     class GameLogic
     {
-        public enum eStepOutcome {PlayerWon, ComputerWon, InvalidMove, ValidMove, Draw}
+        public enum eStepOutcome {PlayerLost, ComputerLost, InvalidMove, ValidMove, Draw}
 
         private Board m_GameBoard;
         private WinValidator m_WinValidator;
         private bool m_IsComputerRival;
         private int m_StepCount;
-        
+        private double m_numOfcells;
+
         public GameLogic(int boardSize, bool isComputerRival)
         {
             m_GameBoard = new Board(boardSize);
             m_WinValidator = new WinValidator(m_GameBoard);
             m_IsComputerRival = isComputerRival;
             m_StepCount = 0;
-             
+            m_numOfcells = Math.Pow(m_GameBoard.BoardSize, 2);
         }
 
     public Board.eCell[,] GameBoard
@@ -34,7 +35,7 @@ namespace TIcTacToe
             computerStepOutcome = eStepOutcome.InvalidMove;
             humanStepOutcome = makeStep(i_x, i_y, !k_ComputerMove);
             
-            if (m_StepCount == Math.Pow(m_GameBoard.BoardSize, 2))
+            if (m_StepCount == m_numOfcells)
             {
                 humanStepOutcome = eStepOutcome.Draw;
             }
@@ -44,7 +45,7 @@ namespace TIcTacToe
                 computerStepOutcome = makeComputerStep();
             }
 
-            return computerStepOutcome == eStepOutcome.ComputerWon ? computerStepOutcome : humanStepOutcome;
+            return computerStepOutcome == eStepOutcome.ComputerLost ? computerStepOutcome : humanStepOutcome;
         }
 
         private eStepOutcome makeStep(int i_x, int i_y, bool i_isComputerStep)
@@ -61,7 +62,7 @@ namespace TIcTacToe
 
                 if (m_WinValidator.IsWinner(i_x, i_y))
                 {
-                    stepOutcome = i_isComputerStep ? eStepOutcome.ComputerWon : eStepOutcome.PlayerWon;
+                    stepOutcome = i_isComputerStep ? eStepOutcome.ComputerLost : eStepOutcome.PlayerLost;
                 }
             }
 

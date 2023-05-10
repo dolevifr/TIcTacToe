@@ -48,7 +48,8 @@ namespace TIcTacToe
 
         public bool IsInRange(int i_x, int i_y)
         {
-            return i_x < m_boardSize && i_y < m_boardSize;
+            return 0 <= i_x && i_x < m_boardSize
+                   && 0 <= i_y && i_y < m_boardSize;
         }
 
         private bool isCellEmpty(int i_x, int i_y)

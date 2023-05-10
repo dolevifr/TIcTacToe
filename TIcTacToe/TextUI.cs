@@ -10,15 +10,16 @@ namespace TIcTacToe
         private const int k_lowerBoardSizeLimit = 3;
         private const int k_upperBoardSizeLimit = 9;
 
+        private int m_currGameStepCounter = 0;
         private int m_playerOneVictoriesCount = 0;
         private int m_playerTwoVictoriesCount = 0;
-
         private int m_boardSize;
         private bool m_isComputerPlayer;
 
         public static void Main()
         {
-            GameWithScoreTrack();
+            UserInterface ui = new UserInterface();
+            ui.GameWithScoreTrack();
         }
 
         public UserInterface()
@@ -27,71 +28,82 @@ namespace TIcTacToe
             m_isComputerPlayer = configureIfComputerPlayer();
         }
 
-        private static void GameWithScoreTrack()
+        private void GameWithScoreTrack()
         {
-            UserInterface ui = new UserInterface();
-            char quitGame = ' ';
-            bool continuePlaying = true;
-            bool isFirstGame = true;
-            GameLogic.eStepOutcome whoWon;
 
+            bool continuePlaying = true;
+            GameLogic.eStepOutcome? finalOutcomeOfGame;
+            
             while (continuePlaying)
             {
                 Console.WriteLine(TextUIMessages.k_quitMessage);
-                whoWon = ui.StartOneMatch(isFirstGame,ui.m_isComputerPlayer,ui.m_boardSize);
-                if (whoWon == GameLogic.eStepOutcome.PlayerWon)
+                finalOutcomeOfGame = StartOneMatch();
+
+                if (finalOutcomeOfGame == GameLogic.eStepOutcome.PlayerLost && m_currGameStepCounter % 2 == 0)
                 {
-                    ui.m_playerOneVictoriesCount++;
+                    m_playerTwoVictoriesCount++;
                 }
-                else if (whoWon == GameLogic.eStepOutcome.ComputerWon)
+                else if (finalOutcomeOfGame == GameLogic.eStepOutcome.ComputerLost ||
+                         (finalOutcomeOfGame == GameLogic.eStepOutcome.PlayerLost && m_currGameStepCounter % 2 == 1))
                 {
-                    ui.m_playerTwoVictoriesCount++;
+                    m_playerOneVictoriesCount++;
                 }
+                else if (finalOutcomeOfGame == null)
+                {
+                    Ex02.ConsoleUtils.Screen.Clear();
+                    continue;
+                }
+
                 Ex02.ConsoleUtils.Screen.Clear();
-                Console.WriteLine(TextUIMessages.k_scoreMessage, ui.m_playerOneVictoriesCount,ui.m_playerTwoVictoriesCount);
+                Console.WriteLine(string.Format(TextUIMessages.k_scoreMessage, m_playerOneVictoriesCount, m_playerTwoVictoriesCount));
                 Thread.Sleep(5000);
                 Ex02.ConsoleUtils.Screen.Clear();
-
             }
         }
 
-        public GameLogic.eStepOutcome StartOneMatch(bool isFirstGame, bool isComputerRival, int boardSize)
+        public GameLogic.eStepOutcome? StartOneMatch()
         {
             GameLogic currentGame;
             TextBoardDisplayer textBoardDisplayer;
-            Point currentUserCoordinates;
+            Point? currentUserCoordinates;
 
-            GameLogic.eStepOutcome currentStepOutcome = GameLogic.eStepOutcome.ValidMove;
+            GameLogic.eStepOutcome? currentStepOutcome = GameLogic.eStepOutcome.ValidMove;
             Console.WriteLine(TextUIMessages.k_welcomeMessage);
-            
-            int stepCounter = 0;
-            if(isFirstGame)
-            {
-                currentGame = new GameLogic(m_boardSize, m_isComputerPlayer);
-            }
-            else
-            {
-                currentGame = new GameLogic(boardSize, isComputerRival);
-            }
+
+            m_currGameStepCounter = 0;
+            currentGame = new GameLogic(m_boardSize, m_isComputerPlayer);
             textBoardDisplayer = new TextBoardDisplayer(currentGame.GameBoard);
 
             while (currentStepOutcome == GameLogic.eStepOutcome.ValidMove || currentStepOutcome == GameLogic.eStepOutcome.InvalidMove)
             {
                 textBoardDisplayer.printBoard();
                 currentUserCoordinates = getCoordinatesFromUser();
+
+                if (!currentUserCoordinates.HasValue)
+                {
+                    currentStepOutcome = null;
+                    break;
+                }
+
                 Ex02.ConsoleUtils.Screen.Clear();
-                currentStepOutcome = currentGame.GameStep(currentUserCoordinates.X - 1, currentUserCoordinates.Y - 1);
+                currentStepOutcome = currentGame.GameStep(currentUserCoordinates.Value.X - 1, currentUserCoordinates.Value.Y - 1);
 
                 if (currentStepOutcome == GameLogic.eStepOutcome.ValidMove)
                 {
-                    stepCounter++;
+                    m_currGameStepCounter++;
                 }
                 else if(currentStepOutcome == GameLogic.eStepOutcome.InvalidMove)
                 {
                     Console.WriteLine(TextUIMessages.k_invalidInputMessage);
+                    Thread.Sleep(1000);
                 }
             }
-            printEndGameMessage(currentStepOutcome, stepCounter);
+
+            if (currentStepOutcome.HasValue)
+            {
+                printEndGameMessage(currentStepOutcome.Value, m_currGameStepCounter);
+            }
+
             return currentStepOutcome;
         }
 
@@ -101,9 +113,9 @@ namespace TIcTacToe
 
             while (true) {
                 Console.WriteLine(TextUIMessages.k_gameBoardSizeSelectionMessage);
-                string input = Console.ReadLine();
+                string rawUserInput = Console.ReadLine();
 
-                if (int.TryParse(input, out value) && value >= k_lowerBoardSizeLimit && value <= k_upperBoardSizeLimit)
+                if (int.TryParse(rawUserInput, out value) && value >= k_lowerBoardSizeLimit && value <= k_upperBoardSizeLimit)
                 {
                     break;
                 }
@@ -114,16 +126,22 @@ namespace TIcTacToe
             return value;
         }
 
-        private Point getCoordinatesFromUser()
+        private Point? getCoordinatesFromUser()
         {
-            Point point;
+            Point? point;
 
             while (true)
             {
                 Console.WriteLine(TextUIMessages.k_cellSelectionMessage);
                 string[] input = Console.ReadLine().Split();
 
-                if (int.TryParse(input[0], out int valueX) && int.TryParse(input[1], out int valueY))
+                if (input.Length == 1 && input[0] == "Q")
+                {
+                    point = null;
+                    break;
+                }
+
+                if (input.Length == 2 && int.TryParse(input[0], out int valueX) && int.TryParse(input[1], out int valueY))
                 {
                     point = new Point(valueX, valueY);
                     break;
@@ -135,18 +153,20 @@ namespace TIcTacToe
             return point;
         }
 
+
         private bool configureIfComputerPlayer()
         {
-            char option;
+            char computerOrhumanRival;
             bool isComputerPlayer;
+
             while (true)
             {
                 Console.WriteLine(TextUIMessages.k_selectIfComputerPlayerMessage);
                 string input = Console.ReadLine();
 
-                if (char.TryParse(input, out option) && option == 'y' || option == 'n')
+                if (char.TryParse(input, out computerOrhumanRival) && computerOrhumanRival == 'y' || computerOrhumanRival == 'n')
                 {
-                    isComputerPlayer = option == 'y';
+                    isComputerPlayer = computerOrhumanRival == 'y';
                     break;
                 }
 
@@ -162,10 +182,10 @@ namespace TIcTacToe
 
             switch(i_endGameOutCome)
             {
-                case GameLogic.eStepOutcome.PlayerWon:
+                case GameLogic.eStepOutcome.PlayerLost:
                     Console.WriteLine(String.Format(TextUIMessages.k_humanWonMessage, (i_stepCounter % 2) + 1));
                     break;
-                case GameLogic.eStepOutcome.ComputerWon:
+                case GameLogic.eStepOutcome.ComputerLost:
                     Console.WriteLine(TextUIMessages.k_computerWonMessage);
                     break;
                 case GameLogic.eStepOutcome.Draw:

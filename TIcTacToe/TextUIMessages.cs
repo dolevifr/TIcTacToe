@@ -23,11 +23,11 @@ namespace TIcTacToe
         public const string k_selectIfComputerPlayerMessage =
             "Please select whether you want to play against the computer (type y/n)";
 
-        public static string k_scoreMessage =
-                "+---------------------+\n" +
-                $"| PLAYER 1  | {0}   |\n" +
-                $"| PLAYER 2  | {1}   |\n" +
-                "+---------------------+\n";
+        public static string k_scoreMessage = @"
++--------------------+ 
+| PLAYER 1  |  {0}   | 
+| PLAYER 2  |  {1}   |
++--------------------+";
 
         public const string k_quitMessage =
             "Please select whether you want to quit the game type Q for quiting";
